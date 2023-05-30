@@ -26,6 +26,9 @@ app.use(cors())
 var server = net.createServer(function(socket) {
   console.log('Cliente conectado')
   console.log(socket)
+  socket.on('data', function(data) {
+    console.log('Llego')
+  })
 })
 /**
  * Listen on provided port, on all network interfaces.
