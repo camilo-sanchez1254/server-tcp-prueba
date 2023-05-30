@@ -7,7 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('server-pruebas:server');
 var http = require('http');
-var net = require('net');
+var sockets = require('socket.io')
+var cors = require('cors')
 
 /**
  * Get port from environment and store in Express.
@@ -15,16 +16,13 @@ var net = require('net');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+app.use(cors())
 
 /**
  * Create HTTP server.
  */
 
 var server = http.createServer(app);
-var tcp = net.createServer(function(socket) {
-  console.log(socket.remoteAddress)
-  console.log('tcp answer')
-})
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -32,7 +30,20 @@ var tcp = net.createServer(function(socket) {
 server.listen(port, () => console.log(`Server connected on port ${port}!`));
 server.on('error', onError);
 server.on('listening', onListening);
-tcp.listen(8001, () => console.log('tcp connected on port 8001'))
+const io = new sockets.Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+})
+io.on('connection', (socket) => {
+  console.log(socket.id)
+  console.log("Socket connected")
+
+  socket.on('disconnect', () => {
+    console.log("Socket disconnected")
+  })
+})
 /**
  * Normalize a port into a number, string, or false.
  */
