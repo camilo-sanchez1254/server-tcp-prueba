@@ -23,23 +23,27 @@ app.use(cors())
  */
 
 // var server = http.createServer(app);
-var server = net.createServer(function(socket) {
-  console.log('Cliente conectado')
-  console.log(socket)
-  socket.on('data', function(data) {
-    console.log('Llego')
-  })
-})
+var server = net.createServer()
 /**
  * Listen on provided port, on all network interfaces.
  */
-
-server.listen(9000, '0.0.0.0', () => {
-  console.log('socket listening on 9000')
+server.listen(port, () => {
+  console.log('socket listening on '+ port)
 })
-app.listen(port, () => console.log(`Server connected on port ${port}!`));
-server.on('error', onError);
-server.on('listening', onListening);
+server.on('connection', (socket) => {
+  socket.on('data', (data) => {
+    console.log(`datos del cliente ${data}`)
+  })
+  socket.on('end', () => {
+    console.log('conexion terminada')
+  })
+  socket.on('error', (err) => {
+    console.log(err.message)
+  })
+})
+//app.listen(port, () => console.log(`Server connected on port ${port}!`));
+// server.on('error', onError);
+// server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
