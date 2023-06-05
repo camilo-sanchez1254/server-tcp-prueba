@@ -22,32 +22,30 @@ app.use(cors())
  * Create HTTP server.
  */
 
-// var server = http.createServer(app);
-var server = net.createServer()
-var socket = new net.Socket()
+var server = net.createServer();
+//var server = net.createServer()
+// var io = new net.Socket({port})
+server.on('connection', (socket) => {
+  socket.on('data', (data) => {
+    console.log('Se enviaron Datos!')
+    console.log(data)
+  })
+  socket.on('close', () => {
+    console.log("Sesión cerrada")
+  })
+  socket.on('error', (err) => {
+    console.log("Error en la conexión")
+    console.log(err)
+  })
+})
+server.listen(port, () => {
+  console.log('server is listening on port 3000')
+})
 /**
  * Listen on provided port, on all network interfaces.
  */
-server.listen({port}, () => {
-  console.log('server listening on '+ port)
-  server.emit('listening')
-})
-socket.connect({port}, (io) => {
-  console.log('conexion exitosa al socket en el puerto ', port)
-  console.log(io)
-})
-socket.on('connect', (io) => {
-  console.log('Conexion cliente: ', io)
-})
-socket.on('data', (data) => {
-  console.log('data: ', data)
-})
-socket.on('end', () => {
-  console.log('conexión terminada')
-})
-//app.listen(port, () => console.log(`Server connected on port ${port}!`));
-// server.on('error', onError);
-// server.on('listening', onListening);
+server.on('error', onError);
+server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
