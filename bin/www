@@ -24,22 +24,25 @@ app.use(cors())
 
 // var server = http.createServer(app);
 var server = net.createServer()
+var socket = new net.Socket()
 /**
  * Listen on provided port, on all network interfaces.
  */
-server.listen(port, () => {
-  console.log('socket listening on '+ port)
+server.listen({port}, () => {
+  console.log('server listening on '+ port)
 })
-server.on('connection', (socket) => {
-  socket.on('data', (data) => {
-    console.log(`datos del cliente ${data}`)
-  })
-  socket.on('end', () => {
-    console.log('conexion terminada')
-  })
-  socket.on('error', (err) => {
-    console.log(err.message)
-  })
+socket.connect({port}, (io) => {
+  console.log('conexion exitosa al socket en el puerto ', port)
+  console.log(io)
+})
+socket.on('connect', (io) => {
+  console.log('Conexion cliente: ', io)
+})
+socket.on('data', (data) => {
+  console.log('data: ', data)
+})
+socket.on('end', () => {
+  console.log('conexión terminada')
 })
 //app.listen(port, () => console.log(`Server connected on port ${port}!`));
 // server.on('error', onError);
