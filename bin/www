@@ -30,6 +30,7 @@ var socket = new net.Socket()
  */
 server.listen({port}, () => {
   console.log('server listening on '+ port)
+  server.emit('listening')
 })
 socket.connect({port}, (io) => {
   console.log('conexion exitosa al socket en el puerto ', port)
