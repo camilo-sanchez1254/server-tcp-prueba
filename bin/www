@@ -9,6 +9,7 @@ var debug = require('debug')('server-pruebas:server');
 var http = require('http');
 var cors = require('cors')
 var net = require('net')
+var jsonSocket = require('json-socket')
 
 /**
  * Get port from environment and store in Express.
@@ -26,14 +27,17 @@ var server = net.createServer();
 //var server = net.createServer()
 // var io = new net.Socket({port})
 server.on('connection', (socket) => {
-  socket.on('data', (data) => {
-    console.log('Se enviaron Datos!')
-    console.log(data)
+  let io = new jsonSocket(socket)
+  io.on('data', (message) => {
+    console.log(message.toString())
+    io.sendMessage({
+      message: "Hola mundo"
+    })
   })
-  socket.on('close', () => {
+  io.on('close', () => {
     console.log("Sesión cerrada")
   })
-  socket.on('error', (err) => {
+  io.on('error', (err) => {
     console.log("Error en la conexión")
     console.log(err)
   })
@@ -44,9 +48,8 @@ server.listen(port, () => {
 /**
  * Listen on provided port, on all network interfaces.
  */
-server.on('error', onError);
 server.on('listening', onListening);
-
+server.on('error', onError);
 /**
  * Normalize a port into a number, string, or false.
  */
